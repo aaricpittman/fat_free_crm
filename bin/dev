@@ -1,0 +1,22 @@
+#!/bin/bash
+
+export APP_PORT=${APP_PORT:-3000}
+
+COMPOSE="docker-compose"
+
+if [ $# -gt 0 ];then
+
+    if [ "$1" == "setup" ]; then
+        $COMPOSE build dev
+        $COMPOSE run --rm dev bundle exec rake db:create db:environment:set db:setup
+
+    elif [ "$1" == "shell" ]; then
+        $COMPOSE run --rm -p "${APP_PORT}:3000" dev /bin/bash
+
+    else
+        $COMPOSE "$@"
+    fi
+
+else
+    $COMPOSE ps
+fi
